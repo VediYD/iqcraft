@@ -1,6 +1,7 @@
 # iqcraft
 
 # Folder Structure
+```
 iqcraft/
 │
 ├── iqcraft/
@@ -38,3 +39,11 @@ iqcraft/
 ├── documents/  # uploaded files are saved in this folder
 │
 └── manage.py
+```
+
+# Wireframe
+
+![img.png](wireframe.png)
+
+[Link](https://miro.com/app/board/uXjVNRZxJC4=/)
+
