@@ -5,7 +5,8 @@
 <div class="homepage">
     <div class="container">
         <p style="text-align: center;">AI System for Legal Bias</p>
-        <div id="new-upload" class="upload-container" onclick="fileUploader()" ondrop="dropFile(event)" ondragover="dragFileIn(event)" ondragleave="dragFileOut(event)">
+        <div id="new-upload" class="upload-container" onclick="fileUploader()" ondrop="dropFile(event)"
+             ondragover="dragFileIn(event)" ondragleave="dragFileOut(event)">
             <p id="default-upload-text" style="display: block;">Click to Upload<br>OR<br>Drag and Drop File</p>
             <input type="file" id="file-input" hidden onchange="sendFilesToDjango(files)"/>
             <p id="dragover-upload-text" style="display: none; border-color: green;">Drop file to upload</p>
