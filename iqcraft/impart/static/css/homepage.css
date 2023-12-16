@@ -1,0 +1,69 @@
+.container, .dashed {
+  background-color: #FFF;
+  border-radius: 25px;
+}
+
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 500px;
+  opacity: 0.7;
+}
+
+.upload-container, .previous-uploads-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 375px;
+  height: 470px;
+  opacity: 0.5;
+  background-color: #d8d8d8;
+  border-radius: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.upload-container:hover, .previous-uploads-container:hover {
+  background-color: grey;
+  color: white;
+  border-color: darkorange;
+}
+
+.upload-container:active, .previous-uploads-container:active {
+  background-color: darkgrey;
+  color: black;
+  border-color: green;
+}
+
+.previous-uploads-container {
+  transform: translate(3%, -50%);
+  border-left: 2px solid black;
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+  border-right: 2px dashed black;
+}
+
+.upload-container {
+  transform: translate(-103%, -50%);
+  border-left: 2px dashed black;
+  border-top: 2px dashed black;
+  border-bottom: 2px dashed black;
+  border-right: 2px solid black;
+}
+
+.dashed {
+  border: none;
+  border-left: 2px dashed #f00;
+  color: #fff;
+  background-color: #fff;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  height: 450px;
+  width: 5px;
+}
