@@ -10,17 +10,17 @@
   transform: translate(-50%, -50%);
   width: 800px;
   height: 500px;
-  opacity: 0.7;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 25px;
 }
 
 .upload-container, .previous-uploads-container {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 375px;
-  height: 470px;
-  opacity: 0.5;
-  background-color: #d8d8d8;
+  width: 370px;
+  height: 450px;
+  background-color: rgba(216, 216, 216, 0.5);
   border-radius: 25px;
   display: flex;
   justify-content: center;
@@ -28,30 +28,30 @@
 }
 
 .upload-container:hover, .previous-uploads-container:hover {
-  background-color: grey;
+  background-color: rgba(127, 127, 127, 0.25);
   color: white;
   border-color: darkorange;
 }
 
 .upload-container:active, .previous-uploads-container:active {
-  background-color: darkgrey;
+  background-color: rgba(64, 64, 64, 0.25);
   color: black;
   border-color: green;
 }
 
 .previous-uploads-container {
-  transform: translate(3%, -50%);
+  transform: translate(3%, -48%);
   border-left: 2px solid black;
   border-top: 2px solid black;
   border-bottom: 2px solid black;
-  border-right: 2px dashed black;
+  border-right: 2px dashed grey;
 }
 
 .upload-container {
-  transform: translate(-103%, -50%);
-  border-left: 2px dashed black;
-  border-top: 2px dashed black;
-  border-bottom: 2px dashed black;
+  transform: translate(-104%, -48%);
+  border-left: 2px dashed grey;
+  border-top: 2px dashed grey;
+  border-bottom: 2px dashed grey;
   border-right: 2px solid black;
 }
 
@@ -61,9 +61,9 @@
   color: #fff;
   background-color: #fff;
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -48%);
   left: 50%;
   top: 50%;
-  height: 450px;
+  height: 460px;
   width: 5px;
 }
