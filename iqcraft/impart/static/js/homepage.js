@@ -38,15 +38,20 @@ function dropFile(event) {
 }
 
 function sendFilesToDjango(files) {
+    var csrftoken = getCookie('csrftoken');
+    var headers = new Headers();
+    headers.append('X-CSRFToken', csrftoken);
+
     var formData = new FormData();
 
     for (var i = 0; i < files.length; i++) {
         formData.append('file', files[i]);
     }
 
-    fetch('/your-django-endpoint/', {
+    fetch('/impart/uploadFiles', {
         method: 'POST',
         body: formData,
+        headers: headers
     })
     .then(response => response.json())
     .then(data => {
@@ -56,4 +61,22 @@ function sendFilesToDjango(files) {
         console.error('Error:', error);
     });
 
+}
+
+function getCookie(name) {
+  var dc = document.cookie;
+  var prefix = name + "=";
+  var begin = dc.indexOf("; " + prefix);
+  if (begin == -1) {
+    begin = dc.indexOf(prefix);
+    if (begin != 0) return null;
+  }
+  else {
+    begin += 2;
+    var end = document.cookie.indexOf(";", begin);
+    if (end == -1) {
+      end = dc.length;
+    }
+  }
+  return decodeURI(dc.substring(begin + prefix.length, end));
 }
