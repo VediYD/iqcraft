@@ -5,8 +5,8 @@ function fileUploader(event) {
 function dragFileIn(event) {
     event.preventDefault();
 
-    var dragoverText = document.getElementById("dragover-upload-text")
-    var defaultText = document.getElementById("default-upload-text")
+    let dragoverText = document.getElementById("dragover-upload-text")
+    let defaultText = document.getElementById("default-upload-text")
 
     defaultText.style.display = "none";
     dragoverText.style.display = "block";
@@ -15,8 +15,8 @@ function dragFileIn(event) {
 function dragFileOut(event) {
     event.preventDefault();
 
-    var dragoverText = document.getElementById("dragover-upload-text")
-    var defaultText = document.getElementById("default-upload-text")
+    let dragoverText = document.getElementById("dragover-upload-text")
+    let defaultText = document.getElementById("default-upload-text")
 
     defaultText.style.display = "block";
     dragoverText.style.display = "none";
@@ -25,26 +25,25 @@ function dragFileOut(event) {
 function dropFile(event) {
     event.preventDefault();
 
-    var dragoverText = document.getElementById("dragover-upload-text")
-    var defaultText = document.getElementById("default-upload-text")
+    let dragoverText = document.getElementById("dragover-upload-text")
+    let defaultText = document.getElementById("default-upload-text")
 
     defaultText.style.display = "block";
     dragoverText.style.display = "none";
 
-    var uploadContainer = document.getElementById("new-upload");
-
-    var files = event.dataTransfer.files;
+    const files = event.dataTransfer.files;
     sendFilesToDjango(files);
 }
 
 function sendFilesToDjango(files) {
-    var csrftoken = getCookie('csrftoken');
-    var headers = new Headers();
+    const csrftoken = getCookie('csrftoken');
+    let headers = new Headers();
+    let formData = new FormData();
+    let i;
+
     headers.append('X-CSRFToken', csrftoken);
 
-    var formData = new FormData();
-
-    for (var i = 0; i < files.length; i++) {
+    for (i = 0; i < files.length; i++) {
         formData.append('file', files[i]);
     }
 
@@ -64,16 +63,17 @@ function sendFilesToDjango(files) {
 }
 
 function getCookie(name) {
-  var dc = document.cookie;
-  var prefix = name + "=";
-  var begin = dc.indexOf("; " + prefix);
+  const dc = document.cookie;
+  const prefix = name + "=";
+  let begin = dc.indexOf("; " + prefix);
+  let end = document.cookie.indexOf(";", begin);
+
   if (begin == -1) {
     begin = dc.indexOf(prefix);
     if (begin != 0) return null;
   }
   else {
     begin += 2;
-    var end = document.cookie.indexOf(";", begin);
     if (end == -1) {
       end = dc.length;
     }
