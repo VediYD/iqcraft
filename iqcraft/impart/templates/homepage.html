@@ -5,9 +5,16 @@
 <div class="homepage">
     <div class="container">
         <p style="text-align: center;">AI System for Legal Bias</p>
-        <div class="upload-container">Click to Upload<br>OR<br>Drag and Drop File</div>
+        <div id="new-upload" class="upload-container" onclick="fileUploader()" ondrop="dropFile(event)" ondragover="dragFileIn(event)" ondragleave="dragFileOut(event)">
+            <p id="default-upload-text" style="display: block;">Click to Upload<br>OR<br>Drag and Drop File</p>
+            <input type="file" id="file-input" hidden onchange="sendFilesToDjango(files)"/>
+            <p id="dragover-upload-text" style="display: none; border-color: green;">Drop file to upload</p>
+        </div>
         <div class="dashed"></div>
-        <div class="previous-uploads-container">Previous Uploads<br>OR<br>Go to Editor</div>
+        <div id="previous-uploads" class="previous-uploads-container" onclick="logMessage('see previous uploads')">
+            Previous Uploads<br>OR<br>Go to Editor
+        </div>
     </div>
 </div>
+<script src="{% static 'js\homepage.js' %}"></script>
 {% endblock %}
