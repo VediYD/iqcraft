@@ -35,6 +35,7 @@ iqcraft/
 │   └── views.py     # website API endpoints
 │
 ├── documents/  # uploaded files are saved in this folder
+├── .env        # file to store the environment variables  #DO NOT COMMIT
 │
 └── manage.py
 ```
