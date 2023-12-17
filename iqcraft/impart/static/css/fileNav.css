@@ -1,0 +1,76 @@
+.grey-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.file-nav-window {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 5px;
+    z-index: 1000;
+    border-radius: 10px;
+    max-height: 60%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-width: 50%;
+}
+
+.file-list-item {
+    display: flex;
+    justify-content: auto;
+    align-items: center;
+    padding: 1px;
+    border-bottom: 1px solid #eee;
+}
+
+.edit-icon, .delete-icon {
+    cursor: pointer;
+    margin: 0 5px;
+}
+
+.edit-icon:hover, .delete-icon:hover {
+    color: #007bff;
+}
+
+.hidden {
+  display: none;
+}
+
+.file-name {
+  max-width: 90%;
+  flex-grow: 1;
+  overflow-x: hidden;
+}
+
+.file-name:hover {
+  color: grey;
+}
+
+::-webkit-scrollbar {
+  width: 6px; /* Set the width of the scrollbar */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: red; /* Set the color of the scrollbar handle */
+  border-radius: 10px; /* Set the border radius of the scrollbar handle */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: darkred; /* Set the color of the scrollbar handle on hover */
+}
+
+/* Track on hover */
+::-webkit-scrollbar-track:hover {
+  background-color: lightgray; /* Set the color of the scrollbar track on hover */
+}
