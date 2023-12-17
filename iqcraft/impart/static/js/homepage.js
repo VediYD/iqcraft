@@ -136,6 +136,17 @@ function openFileNav(event) {
                 // Append the list item to the file-nav-window
                 fileNavWindow.appendChild(listItem);
             });
+
+            const plusButton = document.createElement('div');
+            plusButton.classList.add('file-list-item', 'plus-button');
+            plusButton.innerHTML = '+';
+
+            plusButton.addEventListener('click', () => {
+                document.getElementById("file-input").click();
+                overlay.classList.remove('hidden')
+            });
+
+            fileNavWindow.appendChild(plusButton);
         }  else {
             console.error('Error: Unexpected status -', data.status);
         }
