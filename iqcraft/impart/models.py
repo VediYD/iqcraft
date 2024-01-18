@@ -3,7 +3,12 @@ from django.db import models
 
 class FileInfo(models.Model):
     file_name = models.CharField(max_length=255, unique=True)
-    processed_info = models.AutoField()
+    location = models.CharField(max_length=255)
+    file_id = models.CharField(max_length=255)
 
     def to_dict(self):
-        return {'file_name': self.file_name, 'processed_info': self.processed_info}
+        return {
+            'file_name': self.file_name,
+            'location': self.location,
+            'file_id': self.file_id
+        }
