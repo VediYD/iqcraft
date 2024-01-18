@@ -67,6 +67,32 @@ function sendFilesToDjango(files) {
 
 }
 
+function deleteFile(fileName) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let headers = new Headers();
+    headers.append('X-CSRFToken', csrftoken);
+
+    let formData = new FormData();
+    formData.append('file_name', fileName);
+
+    fetch('/impart/deleteFile', {
+        method: 'POST',
+        body: formData,
+        headers: headers
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == 'success') {
+            console.log(`File ${fileName} deleted successfully.`);
+        } else {
+            console.error('Error: Unable to delete file -', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 function openFileNav(event) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     let headers = new Headers();
@@ -127,13 +153,16 @@ function openFileNav(event) {
                     overlay.classList.add('hidden')
                 });
 
-                // TODO: event handler for file deletion
                 deleteIcon.addEventListener('click', () => {
-                    console.log(`Deleting file: ${file}`);
-                    overlay.classList.add('hidden')
+                    const confirmDelete = window.confirm(`Are you sure you want to delete the file: ${file}?`);
+
+                    if (confirmDelete) {
+                        deleteFile(file);
+                    }
+
+                    overlay.classList.add('hidden');
                 });
 
-                // Append the list item to the file-nav-window
                 fileNavWindow.appendChild(listItem);
             });
 

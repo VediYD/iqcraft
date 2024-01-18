@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home, login, upload_files, get_file_list
+from .views import delete_file
 
 urlpatterns = [
     path('login', login, name='login'),
     path('home', home, name='home'),
     path('uploadFiles', upload_files, name='upload_files'),
     path('getFiles', get_file_list, name='get_file_list'),
+    path('deleteFile', delete_file, name='delete_file'),
 ]
 
