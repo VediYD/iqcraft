@@ -93,6 +93,47 @@ function deleteFile(fileName) {
     });
 }
 
+function fetchFileInfo(fileName) {
+    fetch(`/impart/getFileInfo/${fileName}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // todo: handle file info
+                console.log('File Information:', data.file_info);
+            } else {
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+function loadEditor(fileName) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const headers = new Headers();
+    headers.append('X-CSRFToken', csrftoken);
+
+    fetch(`/impart/getFileContent?fileName=${fileName}`, {
+        method: 'GET',
+        headers: headers
+    })
+    .then(response => response.text())
+    .then(content => {
+
+        const editorContainer = document.getElementById('editor-container');
+        editorContainer.innerHTML = content;
+
+        fetchFileInfo(fileName);
+
+        const overlay = document.getElementById("file-list-overlay");
+        overlay.classList.add('hidden');
+    })
+    .catch(error => {
+        console.error('Error fetching file content:', error);
+    });
+}
+
 function openFileNav(event) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     let headers = new Headers();
@@ -146,11 +187,13 @@ function openFileNav(event) {
                 fileName.addEventListener('click', () => {
                     console.log(`Opening editor for file: ${file}`);
                     overlay.classList.add('hidden')
+                    loadEditor(file);
                 });
 
                 editIcon.addEventListener('click', () => {
                     console.log(`Opening editor for file: ${file}`);
                     overlay.classList.add('hidden')
+                    loadEditor(file);
                 });
 
                 deleteIcon.addEventListener('click', () => {

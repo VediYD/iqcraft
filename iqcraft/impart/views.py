@@ -6,6 +6,9 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 from os import listdir, path as os_path
 
+from .models import FileInfo
+from .clients import process_file
+
 
 def login(request):
     return render(request, "login.html")
@@ -59,3 +62,17 @@ def delete_file(request):
             return JsonResponse({'status': 'error', 'message': 'File name not provided in the request.'})
 
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
+
+def get_file_info(request, file_name):
+    try:
+        # first check database for information
+        file_info = FileInfo.objects.get(file_name=file_name)
+        return JsonResponse({'status': 'success', 'file_info': file_info.to_dict()})
+    except FileInfo.DoesNotExist:
+        # if no data exists, process the file and save data to database
+        processed_info = process_file(file_name)
+        FileInfo.objects.create(file_name=file_name, processed_info=processed_info)
+        return JsonResponse({'status': 'success', 'file_info': processed_info})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
