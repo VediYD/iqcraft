@@ -1,7 +1,7 @@
 .idea
 **/*.pdf
 env
-iqcraft/.env
+iqcraft/impart/clients/.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -125,7 +125,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-iqcraft/.env
+iqcraft/impart/clients/.env
 .venv
 env/
 venv/

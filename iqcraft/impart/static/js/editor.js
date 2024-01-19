@@ -20,6 +20,17 @@ function fetchFileInfo(fileName) {
         });
 }
 
+function togglePanel(panelId) {
+    let panel = document.getElementById(panelId);
+    const panelIsCollapsed = panel.classList.contains('collapsed');
+    if (panelIsCollapsed) {
+        panel.classList.remove('collapsed');
+    } else {
+        panel.classList.add('collapsed');
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', function() {
     const currentUrl = window.location.href;
     const fileName = extractFileNameFromUrl(currentUrl);
