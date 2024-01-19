@@ -18,6 +18,10 @@ def home(request):
     return render(request, "homepage.html")
 
 
+def editor(request, file_name):
+    return render(request, "editor.html")
+
+
 @require_POST
 def upload_files(request):
     try:
@@ -46,6 +50,7 @@ def get_file_list(request):
         return JsonResponse({"status": 'error', "message": str(e)})
 
 
+@require_POST
 def delete_file(request):
     if request.method == 'POST':
         file_name = request.POST.get('file_name', None)
@@ -72,7 +77,11 @@ def get_file_info(request, file_name):
     except FileInfo.DoesNotExist:
         # if no data exists, process the file and save data to database
         processed_info = process_file(file_name)
-        FileInfo.objects.create(file_name=file_name, processed_info=processed_info)
+        FileInfo.objects.create(
+            file_name=processed_info['name'],
+            location=processed_info['location'],
+        )
         return JsonResponse({'status': 'success', 'file_info': processed_info})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
+
