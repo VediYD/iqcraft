@@ -18,7 +18,8 @@
 }
 
 .collapsible-panel {
-  width: 200px;
+  white-space: nowrap;
+  width: 400px;
   height: calc(100% - 50px);
   overflow-x: hidden;
   position: absolute;
@@ -26,15 +27,17 @@
   transition: 0.5s;
   box-sizing: border-box;
   cursor: pointer;
+  background-color: white;
+  border-left: thin solid grey;
+  border-top: thin solid grey;
+  border-bottom: thin solid grey;
 }
 
 #panel1 {
-  background-color: blue;
   right:0px;
 }
 
 #panel2 {
-  background-color: black;
   right: 50px;
 }
 

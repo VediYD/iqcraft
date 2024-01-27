@@ -33,7 +33,7 @@ function togglePanel(panelId) {
 
 function adjustPanel2Position(isCollapsed) {
     const panel2 = document.getElementById('panel2');
-    const panel1Width = isCollapsed ? 50 : 200;
+    const panel1Width = isCollapsed ? 50 : 400;
 
     panel2.style.right = `${panel1Width}px`;
 }
