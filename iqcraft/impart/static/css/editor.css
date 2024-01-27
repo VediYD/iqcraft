@@ -11,16 +11,33 @@
   height: 50px;
 }
 
+.editor-window {
+  width: 100%;
+  height: calc(100% - 50px);
+  margin-top: 0px;
+}
+
 .collapsible-panel {
+  width: 200px;
+  height: calc(100% - 50px);
+  overflow-x: hidden;
+  position: absolute;
+  margin-top: 0;
   transition: 0.5s;
-  height: 100%;
-  width: 100px;
-  background-color: white;
-  border-color: black;
-  border-width: thin;
-  left: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+#panel1 {
+  background-color: blue;
+  right:0px;
+}
+
+#panel2 {
+  background-color: black;
+  right: 50px;
 }
 
 .collapsed {
-  width: 10px;
+  width: 50px;
 }

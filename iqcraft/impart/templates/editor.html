@@ -7,26 +7,14 @@
         <p style="text-align: center; padding: 15px 0;">Impart AI Editor</p>
     </div>
     <div class="editor-window">
-        <div
-                class="collapsible-panel collapsed"
-                onmouseenter="togglePanel('panel1')"
-                onmouseleave="togglePanel('panel1')"
-                id="panel1"
-        >
-            <div class="panel-header"
-            >Panel 1</div>
-            <div class="panel-content"></div>
+        <div class="collapsible-panel collapsed" id="panel1">
+            <!-- Content for panel 1 -->
         </div>
-        <div
-                class="collapsible-panel collapsed"
-                id="panel2"
-                onmouseenter="togglePanel('panel2')"
-                onmouseleave="togglePanel('panel2')"
-        >
-            <div class="panel-header">Panel 2</div>
-            <div class="panel-content"></div>
+        <div class="collapsible-panel position-relative collapsed" id="panel2">
+            <!-- Content for panel 2 -->
         </div>
     </div>
 </div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/editor.js' %}" defer></script>
 {% endblock %}
