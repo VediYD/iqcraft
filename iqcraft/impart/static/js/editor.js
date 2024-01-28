@@ -18,9 +18,15 @@ function handleData(data) {
         fileInfo = data.biases_info;
         updateModelList();
         handleAgreement(fileInfo[0]?.audit_response);
+        handleReasoning(fileInfo[0]?.reasoning);
     } else {
         console.error('Error:', data.message);
     }
+}
+
+function handleReasoning(reasoning) {
+    const reasoningTextArea = document.getElementById('why-whynot-box');
+    reasoningTextArea.value = reasoning;
 }
 
 function updateAuditResponse(isAgree) {
@@ -45,6 +51,36 @@ function updateAuditResponse(isAgree) {
     }
 }
 
+function updateReasoning(reasoning) {
+    const selectedInfo = getSelectedInfo();
+    const selectedBias = selectedInfo.selectedBias;
+
+    // Find the corresponding bias in fileInfo and update reasoning
+    const updatedFileInfo = fileInfo.map(item => {
+        if (item.model_name === selectedInfo.selectedModel && item.bias_text === selectedBias) {
+            if (reasoning !== null) {
+                item.reasoning = reasoning;
+            }
+        }
+        return item;
+    });
+
+    fileInfo = updatedFileInfo;
+
+    // Only update the view if reasoning is not null
+    if (reasoning !== null) {
+        handleReasoning(reasoning);
+    }
+}
+
+function handleModelSelection(selectedModel) {
+    const biasesForModel = fileInfo.filter(item => item.model_name === selectedModel);
+    const selectedBiasItem = biasesForModel[0];
+
+    handleAgreement(selectedBiasItem.audit_response);
+    handleReasoning(selectedBiasItem.reasoning);
+}
+
 function updateModelList() {
     const models = Array.from(new Set(fileInfo.map(item => item.model_name)));
     const modelList = $('.model-list');
@@ -55,6 +91,7 @@ function updateModelList() {
         modelList.append(listItem);
         if (index === 0) {
             listItem.click();
+            handleModelSelection(model); // Added to handle initial model selection
         }
         $('.bias-item:first-child').click();
     });
@@ -87,6 +124,7 @@ function createModelItem(model) {
             const selectedModelName = $('.model-item.selected').text();
             const selectedBiasItem = fileInfo.find(item => item.model_name === selectedModelName && item.bias_text === selectedBiasText);
             handleAgreement(selectedBiasItem.audit_response);
+            clearAndLoadReasoning(selectedBiasItem.reasoning);
         });
     });
 
@@ -148,6 +186,11 @@ function nextBias(event) {
             alert('No more models available in the next direction. Please select a different file to proceed.');
         }
     }
+}
+
+function clearAndLoadReasoning(text) {
+    const reasoningTextArea = document.getElementById('why-whynot-box');
+    reasoningTextArea.value = text;
 }
 
 function handleError(error) {
@@ -254,6 +297,11 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAuditResponse(false);
     });
 
+    const reasoningTextArea = document.getElementById('why-whynot-box');
+    reasoningTextArea.addEventListener('input', function () {
+        updateReasoning(getTextAreaValue());
+    });
+
     // save progress every 5 seconds
     setInterval(function() {
         const isAgree = determineClickedButton();
@@ -261,6 +309,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const textAreaValue = getTextAreaValue();
 
         if (selectedInfo.selectedBias) {
+            const matchingObject = fileInfo.find(
+                obj => obj.model_name === selectedInfo.selectedModel && obj.bias_text === selectedInfo.selectedBias
+            );
+            if (matchingObject) {
+
+                matchingObject.audit_response = isAgree;
+                matchingObject.reasoning = textAreaValue;
+
+                console.log('Updated Object:', matchingObject);
+            } else {
+                console.log('No Matching Object Found.');
+            }
             console.log(isAgree, selectedInfo, textAreaValue);
         } else {
             console.log('No Bias Selected.');
