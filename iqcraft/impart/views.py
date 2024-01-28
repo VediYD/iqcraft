@@ -1,13 +1,14 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from django.core.files.storage import default_storage
-from django.utils.datastructures import MultiValueDictKeyError
-from django.views.decorators.http import require_POST
-from django.conf import settings
 from os import listdir, path as os_path
 
-from .models import FileInfo
+from django.conf import settings
+from django.core.files.storage import default_storage
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils.datastructures import MultiValueDictKeyError
+from django.views.decorators.http import require_POST
+
 from .clients import process_file
+from .models import FileInfo, Biases
 
 
 def login(request):
@@ -77,11 +78,17 @@ def get_file_info(request, file_name):
     except FileInfo.DoesNotExist:
         # if no data exists, process the file and save data to database
         processed_info = process_file(file_name)
-        FileInfo.objects.create(
+        file_info = FileInfo.objects.create(
             file_name=processed_info['name'],
             location=processed_info['location'],
         )
+
+        for bias_text in processed_info['biases']:
+            Biases.objects.create(
+                file_info=file_info,
+                bias_text=bias_text,
+            )
+
         return JsonResponse({'status': 'success', 'file_info': processed_info})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
-
