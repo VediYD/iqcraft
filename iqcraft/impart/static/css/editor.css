@@ -8,7 +8,7 @@
 .editor-bar {
   background-color: red;
   color: white;
-  height: 50px;
+  height: 3vw;
 }
 
 .editor-window {
@@ -95,6 +95,7 @@ li.hover {
   left: 10%;
   transform: translate(-10%, -55%);
   border: thin solid gray;
+  border-radius: 10px;
 }
 
 .agree-btn:hover {
@@ -110,6 +111,7 @@ li.hover {
   left: 90%;
   transform: translate(-90%, -55%);
   border: thin solid gray;
+  border-radius: 10px;
 }
 
 .disagree-btn:hover {
@@ -126,4 +128,40 @@ li.hover {
   transform: translate(-50%, -90%);
   border: thin solid gray;
   overflow: scroll;
+}
+
+.nav-previous {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3vw;
+  height: 3vw;
+  transform: translate(-50%, 50%) rotate(180deg);
+}
+
+.nav-next {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 3vw;
+  height: 3vw;
+  transform: translate(50%, 50%);
+}
+
+.nav-open {
+  position: relative;
+  left: 0;
+  top: 50%;
+  transform: translate(0%, -50%);
+  width: 2vw;
+  height: 2vw;
+}
+
+.editor-title {
+  position: absolute;
+  left: 50%;
+  top: 0%;
+  transform: translate(-50%, -0%);
+  text-align: center;
+  font-size: 2vw;
 }

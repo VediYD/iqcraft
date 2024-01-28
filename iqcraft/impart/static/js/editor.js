@@ -32,6 +32,7 @@ function updateModelList(biasesInfo) {
         if (index === 0) {
             listItem.click();
         }
+        $('.bias-item:first-child').click();
     });
 }
 

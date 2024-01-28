@@ -4,7 +4,8 @@
 <link rel="stylesheet" href="{% static 'css/editor.css' %}">
 <div class="editor">
     <div class="editor-bar">
-        <p style="text-align: center; padding: 15px 0;">Impart AI Editor</p>
+        <img class="nav-open" src="{% static 'images/iconfinder_back.svg' %}" alt='open file nav'>
+        <p class="editor-title">Impart AI Editor</p>
     </div>
     <div class="editor-window">
         <div class="collapsible-panel collapsed" id="panel1">
@@ -103,6 +104,8 @@
             <div class="agree-btn" id="agree-btn" style="text-align: center; font-size: 2vw;">Agree?</div>
             <div class="disagree-btn" id="disagree-btn" style="text-align: center; font-size: 2vw;">Disagree?</div>
             <textarea  class="why-whynot-box" id="why-whynot-box" placeholder="Reasons"></textarea>
+            <img class="nav-previous" src="{% static 'images/next-icon.png' %}" alt="previous-bias">
+            <img class="nav-next" src="{% static 'images/next-icon.png' %}" alt="next-bias">
         </div>
     </div>
 </div>
