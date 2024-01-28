@@ -49,6 +49,7 @@
   max-width: 90%;
   flex-grow: 1;
   overflow-x: hidden;
+  color: back;
 }
 
 .file-name:hover {

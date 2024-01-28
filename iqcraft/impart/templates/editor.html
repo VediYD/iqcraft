@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{% static 'css/editor.css' %}">
 <div class="editor">
     <div class="editor-bar">
-        <img class="nav-open" src="{% static 'images/iconfinder_back.svg' %}" alt='open file nav'>
+        <img class="nav-open" src="{% static 'images/iconfinder_back.svg' %}" alt='open file nav' onclick="openFileNav(event)">
         <p class="editor-title">Impart AI Editor</p>
     </div>
     <div class="editor-window">
@@ -104,11 +104,18 @@
             <div class="agree-btn" id="agree-btn" style="text-align: center; font-size: 2vw;">Agree?</div>
             <div class="disagree-btn" id="disagree-btn" style="text-align: center; font-size: 2vw;">Disagree?</div>
             <textarea  class="why-whynot-box" id="why-whynot-box" placeholder="Reasons"></textarea>
-            <img class="nav-previous" src="{% static 'images/next-icon.png' %}" alt="previous-bias">
-            <img class="nav-next" src="{% static 'images/next-icon.png' %}" alt="next-bias">
+            <img class="nav-previous" src="{% static 'images/next-icon.png' %}" alt="previous-bias" onclick="previousBias(event)">
+            <img class="nav-next" src="{% static 'images/next-icon.png' %}" alt="next-bias" onclick="nextBias(event)">
         </div>
+    </div>
+</div>
+<link rel="stylesheet" href="{% static 'css\fileNav.css' %}">
+<div id="file-list-overlay" class="grey-container hidden">
+    <div id="file-list" class="file-nav-window">
+        <p>Files</p>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery.min.js"></script>
 <script src="{% static 'js/editor.js' %}" defer></script>
+<script src="{% static 'js/filenav.js' %}" defer></script>
 {% endblock %}

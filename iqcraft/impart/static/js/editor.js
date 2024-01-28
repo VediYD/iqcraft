@@ -1,3 +1,5 @@
+let fileInfo = {};
+
 function extractFileNameFromUrl(url) {
     const urlParts = url.split('/');
     const fileName = urlParts[urlParts.length - 2];
@@ -13,7 +15,8 @@ function fetchFileInfo(fileName) {
 
 function handleData(data) {
     if (data.status === 'success') {
-        updateModelList(data.biases_info);
+        fileInfo = data.biases_info;
+        updateModelList();
         console.log('File Information:', data.file_info);
         console.log('Bias Information:', data.biases_info);
     } else {
@@ -21,13 +24,13 @@ function handleData(data) {
     }
 }
 
-function updateModelList(biasesInfo) {
-    const models = Array.from(new Set(biasesInfo.map(item => item.model_name)));
+function updateModelList() {
+    const models = Array.from(new Set(fileInfo.map(item => item.model_name)));
     const modelList = $('.model-list');
     modelList.empty();
 
     models.forEach((model, index) => {
-        const listItem = createModelItem(model, biasesInfo);
+        const listItem = createModelItem(model);
         modelList.append(listItem);
         if (index === 0) {
             listItem.click();
@@ -36,12 +39,13 @@ function updateModelList(biasesInfo) {
     });
 }
 
-function createModelItem(model, biasesInfo) {
+function createModelItem(model) {
     const listItem = $('<li>').text(model).addClass('model-item');
 
     listItem.on('click', function () {
+        const selectedIndex = $(this).index();
         const selectedModel = $(this).text();
-        const biasesForModel = biasesInfo.filter(item => item.model_name === selectedModel);
+        const biasesForModel = fileInfo.filter(item => item.model_name === selectedModel);
         const biasesList = biasesForModel.map(bias => $('<li>').text(bias.bias_text).addClass('bias-item'));
 
         $('.bias-list').empty().append($('<ul>').append(biasesList));
@@ -67,6 +71,54 @@ function createModelItem(model, biasesInfo) {
     );
 
     return listItem;
+}
+
+function previousBias(event) {
+    const selectedModel = $('.model-item.selected').text();
+    const selectedBias = $('.bias-item.selected');
+
+    if (selectedBias.length > 0 && selectedBias.index() > 0) {
+        // If there is a previous bias in the list, select it
+        selectedBias.prev().click();
+    } else {
+        const previousModel = $('.model-item.selected').prev('.model-item');
+
+        if (previousModel.length > 0) {
+            // If there is a previous model, select its last bias
+            const biasesForModel = fileInfo.filter(item => item.model_name === previousModel.text());
+            const lastBias = biasesForModel[biasesForModel.length - 1];
+            $('.model-item.selected').removeClass('selected');
+            previousModel.click();
+            $('.bias-item:contains("' + lastBias.bias_text + '")').click();
+        } else {
+            // No more models in the previous direction
+            alert('No more models available in the previous direction. Please select a different file to proceed.');
+        }
+    }
+}
+
+function nextBias(event) {
+    const selectedModel = $('.model-item.selected').text();
+    const selectedBias = $('.bias-item.selected');
+
+    if (selectedBias.length > 0 && selectedBias.next('.bias-item').length > 0) {
+        // If there is a next bias in the list, select it
+        selectedBias.next().click();
+    } else {
+        const nextModel = $('.model-item.selected').next('.model-item');
+
+        if (nextModel.length > 0) {
+            // If there is a next model, select its first bias
+            const biasesForModel = fileInfo.filter(item => item.model_name === nextModel.text());
+            const firstBias = biasesForModel[0];
+            $('.model-item.selected').removeClass('selected');
+            nextModel.click();
+            $('.bias-item:contains("' + firstBias.bias_text + '")').click();
+        } else {
+            // No more models in the next direction
+            alert('No more models available in the next direction. Please select a different file to proceed.');
+        }
+    }
 }
 
 function handleError(error) {
