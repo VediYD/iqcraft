@@ -17,10 +17,31 @@ function handleData(data) {
     if (data.status === 'success') {
         fileInfo = data.biases_info;
         updateModelList();
-        console.log('File Information:', data.file_info);
-        console.log('Bias Information:', data.biases_info);
+        handleAgreement(fileInfo[0]?.audit_response);
     } else {
         console.error('Error:', data.message);
+    }
+}
+
+function updateAuditResponse(isAgree) {
+    const selectedInfo = getSelectedInfo();
+    const selectedBias = selectedInfo.selectedBias;
+
+    // Find the corresponding bias in fileInfo and update audit_response
+    const updatedFileInfo = fileInfo.map(item => {
+        if (item.model_name === selectedInfo.selectedModel && item.bias_text === selectedBias) {
+            if (isAgree !== null) {
+                item.audit_response = isAgree;
+            }
+        }
+        return item;
+    });
+
+    fileInfo = updatedFileInfo;
+
+    // Only update the view if audit_response is not null
+    if (isAgree !== null) {
+        handleAgreement(isAgree);
     }
 }
 
@@ -52,12 +73,20 @@ function createModelItem(model) {
         $(this).addClass('selected').siblings().removeClass('selected');
         $('.bias-list .bias-item:first-child').click();
 
+        const selectedBias = biasesForModel[0];
+        handleAgreement(selectedBias.audit_response);
+
         $('.bias-item').on('mouseenter', function () {
             $(this).addClass('hover');
         }).on('mouseleave', function () {
             $(this).removeClass('hover');
         }).on('click', function () {
             $(this).addClass('selected').siblings().removeClass('selected');
+
+            const selectedBiasText = $(this).text();
+            const selectedModelName = $('.model-item.selected').text();
+            const selectedBiasItem = fileInfo.find(item => item.model_name === selectedModelName && item.bias_text === selectedBiasText);
+            handleAgreement(selectedBiasItem.audit_response);
         });
     });
 
@@ -217,10 +246,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agreeBtn.addEventListener('click', function() {
         handleAgreement(true);
+        updateAuditResponse(true);
     });
 
     disagreeBtn.addEventListener('click', function() {
         handleAgreement(false);
+        updateAuditResponse(false);
     });
 
     // save progress every 5 seconds
