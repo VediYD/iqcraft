@@ -45,7 +45,7 @@
   width: 50px;
 }
 
-li.selected {
+li.selected, li.bias-item.selected {
     background-color: #d3d3d3;
 }
 
@@ -55,5 +55,8 @@ li.hover {
 
 .model-list, .bias-list {
     list-style-type: none;
-    padding-left: 10px;
+    padding-left: 2px;
+}
+
+.bias-item {
 }

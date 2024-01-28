@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <div class="primary-header">
         <div class="row">
@@ -8,14 +9,14 @@
                     <div class="site-branding">
                         <a class="site-title" href="https://a2i2.deakin.edu.au/">
 								<span>
-									<img src="https://a2i2.deakin.edu.au/wp-content/themes/a2i2/assets/images/a2i2-red-logo.svg"
+									<img src="{% static 'images\a2i2-red-logo.svg' %}"
                                          alt="a2i2 red logo">
 								</span>
                             <img class="logo"
-                                 src="https://a2i2.deakin.edu.au/wp-content/themes/a2i2/assets/images/a2i2-logo.svg"
+                                 src="{% static 'images\a2i2-logo.svg' %}"
                                  alt="A²I² Artificial Intelligence at Deakin">
                             <img class="deakin-logo"
-                                 src="https://a2i2.deakin.edu.au/wp-content/themes/a2i2/assets/images/deakin-logo.svg"
+                                 src="{% static 'images\deakin-logo.svg' %}"
                                  alt="deakin logo">
                         </a>
                     </div>
@@ -30,7 +31,6 @@
             </div>
         </div>
     </div>
-    {% load static %}
     {% csrf_token %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -40,7 +40,6 @@
     <link rel="stylesheet" href="{% static 'css\base.css' %}">
 </head>
 <body>
-{% load static %}
 <div id="particles-js"></div>
 <div class="content">
     {% block content %}{% endblock %}

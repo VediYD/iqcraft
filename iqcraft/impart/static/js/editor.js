@@ -9,25 +9,28 @@ function fetchFileInfo(fileName) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-
-                // Populate the Models list
                 const models = Array.from(new Set(data.biases_info.map(item => item.model_name)));
                 const modelList = $('.model-list');
                 modelList.empty();
                 models.forEach((model, index) => {
                     const listItem = $('<li>').text(model).addClass('model-item');
                     listItem.on('click', function () {
-                        // When a model is clicked, populate the Biases list
                         const selectedModel = $(this).text();
                         const biasesForModel = data.biases_info.filter(item => item.model_name === selectedModel);
                         const biasesList = biasesForModel.map(bias => $('<li>').text(bias.bias_text).addClass('bias-item'));
-                        $('.bias-list').empty().append($('<ul>').addClass('bias-list').append(biasesList));
+                        $('.bias-list').empty().append($('<ul>').append(biasesList));
 
-                        // Highlight the selected model and remove highlight from others
                         $(this).addClass('selected').siblings().removeClass('selected');
-                    });
+                        $('.bias-list .bias-item:first-child').click();
 
-                    // Highlight on mouseover and remove highlight on mouseout
+                        $('.bias-item').on('mouseenter', function () {
+                            $(this).addClass('hover');
+                        }).on('mouseleave', function () {
+                            $(this).removeClass('hover');
+                        }).on('click', function () {
+                            $(this).addClass('selected').siblings().removeClass('selected');
+                        });
+                    });
                     listItem.hover(
                         function () {
                             $(this).addClass('hover');
@@ -36,20 +39,10 @@ function fetchFileInfo(fileName) {
                             $(this).removeClass('hover');
                         }
                     );
-
                     modelList.append(listItem);
-
-                    // Automatically select the first model by default
                     if (index === 0) {
                         listItem.click();
                     }
-                });
-
-                // Add hover effect for the bias list
-                $('.bias-list').on('mouseenter', '.bias-item', function () {
-                    $(this).addClass('hover');
-                }).on('mouseleave', '.bias-item', function () {
-                    $(this).removeClass('hover');
                 });
 
                 console.log('File Information:', data.file_info);
