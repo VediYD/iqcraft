@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from .views import home, login_view, upload_files, get_file_list
-from .views import delete_file, get_file_info, editor
+from .views import delete_file, get_file_info, editor, save_progress
 
 urlpatterns = [
     path('login', login_view, name='login'),
@@ -27,5 +27,6 @@ urlpatterns = [
     path('deleteFile', delete_file, name='delete_file'),
     path('getFileInfo/<str:file_name>/', get_file_info, name='get_file_info'),
     path('loadEditor/<str:file_name>/', editor, name='loadEditor'),
+    path('saveProgress/', save_progress, name='save_progress'),
 ]
 

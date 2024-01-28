@@ -1,13 +1,13 @@
-from os import listdir, path as os_path
+from os import path as os_path
 
 from django.conf import settings
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
 
 from .clients import process_file
 from .models import FileInfo, Biases
@@ -143,5 +143,41 @@ def get_file_info(request, file_name):
                 )
 
         return JsonResponse(_return_info(file_name))
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+
+
+@login_required
+@require_POST
+def save_progress(request):
+    try:
+        selected_model = request.POST.get('selected_model')
+        selected_bias = request.POST.get('selected_bias')
+        audit_response = request.POST.get('audit_response')
+        audit_response = audit_response.lower() == 'true'
+        reasoning = request.POST.get('reasoning')
+
+        file_name = request.POST.get('file_name')
+        user = request.user
+
+        # Find or create FileInfo object
+        file_info, created = FileInfo.objects.get_or_create(
+            file_name=file_name,
+            user=user
+        )
+
+        # Find or create Biases object
+        biases, created = Biases.objects.get_or_create(
+            file_info=file_info,
+            model_name=selected_model,
+            bias_text=selected_bias
+        )
+
+        # Update audit_response and reasoning
+        biases.audit_response = audit_response
+        biases.reasoning = reasoning
+        biases.save()
+
+        return JsonResponse({'status': 'success', 'message': 'Progress saved successfully'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})

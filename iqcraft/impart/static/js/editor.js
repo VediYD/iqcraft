@@ -303,19 +303,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const textAreaValue = getTextAreaValue();
 
         if (selectedInfo.selectedBias) {
-            const matchingObject = fileInfo.find(
-                obj => obj.model_name === selectedInfo.selectedModel && obj.bias_text === selectedInfo.selectedBias
-            );
-            if (matchingObject) {
+            const formData = new FormData();
+            formData.append('selected_model', selectedInfo.selectedModel);
+            formData.append('selected_bias', selectedInfo.selectedBias);
+            formData.append('audit_response', isAgree);
+            formData.append('reasoning', textAreaValue);
+            formData.append('file_name', extractFileNameFromUrl(window.location.href));
 
-                matchingObject.audit_response = isAgree;
-                matchingObject.reasoning = textAreaValue;
+            fetch('/impart/saveProgress/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
 
-                console.log('Updated Object:', matchingObject);
-            } else {
-                console.log('No Matching Object Found.');
-            }
-            console.log(isAgree, selectedInfo, textAreaValue);
+                    if (data.status === 'success') {
+                        console.log('Progress saved successfully');
+                    } else {
+                        console.error('Error:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         } else {
             console.log('No Bias Selected.');
         }
