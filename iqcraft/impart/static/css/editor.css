@@ -31,6 +31,7 @@
   border-left: thin solid grey;
   border-top: thin solid grey;
   border-bottom: thin solid grey;
+  z-index: 999;
 }
 
 #panel1 {
@@ -59,4 +60,70 @@ li.hover {
 }
 
 .bias-item {
+}
+
+.editor-form {
+  top:50%;
+  left: 50%;
+  position: relative;
+  background-color: white;
+  width: 60%;
+  height: 90%;
+  transform: translate(-50%, -50%);
+  z-index: 998;
+  border: thin solid gray;
+}
+
+.bias-body-box {
+  top: 10%;
+  left: 50%;
+  position: relative;
+  background-color: white;
+  width: 90%;
+  height: 40%;
+  transform: translate(-50%, -10%);
+  border: thin solid gray;
+  overflow: scroll;
+}
+
+.agree-btn {
+  position: absolute;
+  background-color: white;
+  width: 40%;
+  height: 10%;
+  top: 55%;
+  left: 10%;
+  transform: translate(-10%, -55%);
+  border: thin solid gray;
+}
+
+.agree-btn:hover {
+  background-color: #D1FFBD;
+}
+
+.disagree-btn {
+  position: absolute;
+  background-color: white;
+  width: 40%;
+  height: 10%;
+  top: 55%;
+  left: 90%;
+  transform: translate(-90%, -55%);
+  border: thin solid gray;
+}
+
+.disagree-btn:hover {
+  background-color: #FFB3B2;
+}
+
+.why-whynot-box {
+  top: 90%;
+  left: 50%;
+  position: absolute;
+  background-color: white;
+  width: 90%;
+  height: 30%;
+  transform: translate(-50%, -90%);
+  border: thin solid gray;
+  overflow: scroll;
 }

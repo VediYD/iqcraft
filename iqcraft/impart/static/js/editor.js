@@ -90,12 +90,53 @@ function adjustPanel2Position(isCollapsed) {
     panel2.style.right = `${panel1Width}px`;
 }
 
+function handleAgreement(isAgree) {
+    const agreeBtn = document.getElementById('agree-btn');
+    const disagreeBtn = document.getElementById('disagree-btn');
+
+    if (isAgree) {
+        agreeBtn.style.backgroundColor = '#5CED73';
+        disagreeBtn.style.backgroundColor = 'white';
+    } else {
+        disagreeBtn.style.backgroundColor = '#FF4F4B';
+        agreeBtn.style.backgroundColor = 'white';
+    }
+}
+
+function determineClickedButton() {
+    const agreeBtn = window.getComputedStyle(document.getElementById('agree-btn'));
+    const disagreeBtn = window.getComputedStyle(document.getElementById('disagree-btn'));
+
+    if (agreeBtn.backgroundColor === 'rgb(92, 237, 115)') {
+        return true;
+    } else if (disagreeBtn.backgroundColor === 'rgb(255, 79, 75)') {
+        return false;
+    } else {
+        return null;
+    }
+}
+
+function getSelectedInfo() {
+    const selectedModel = $('.model-list .selected').text();
+    const selectedBias = $('.bias-list .selected').text();
+
+    return {
+        selectedModel: selectedModel,
+        selectedBias: selectedBias
+    };
+}
+
+function getTextAreaValue() {
+    const textArea = document.getElementById('why-whynot-box').value;
+    return textArea
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const currentUrl = window.location.href;
     const fileName = extractFileNameFromUrl(currentUrl);
     fetchFileInfo(fileName);
 
-    // Add event listeners for panel toggling and mouse enter/leave
+    // event listeners for panel toggling and mouse enter/leave
     const panel1 = document.getElementById('panel1');
     const panel2 = document.getElementById('panel2');
 
@@ -116,4 +157,29 @@ document.addEventListener('DOMContentLoaded', function() {
     panel2.addEventListener('mouseleave', function() {
         togglePanel('panel2');
     });
+
+    // event listeners for agree / disagree switch
+    const agreeBtn = document.getElementById('agree-btn');
+    const disagreeBtn = document.getElementById('disagree-btn');
+
+    agreeBtn.addEventListener('click', function() {
+        handleAgreement(true);
+    });
+
+    disagreeBtn.addEventListener('click', function() {
+        handleAgreement(false);
+    });
+
+    // save progress every 5 seconds
+    setInterval(function() {
+        const isAgree = determineClickedButton();
+        const selectedInfo = getSelectedInfo();
+        const textAreaValue = getTextAreaValue();
+
+        if (selectedInfo.selectedBias) {
+            console.log(isAgree, selectedInfo, textAreaValue);
+        } else {
+            console.log('No Bias Selected.');
+        }
+    }, 5000);
 });
