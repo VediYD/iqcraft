@@ -9,16 +9,19 @@
     <div class="welcome-text">
         <p style="font-size: 2vw;">Welcome to IQCraft</p>
     </div>
-    <div class="input-row">
-        <img class="icon inline-icon" src="{% static 'images\user-icon.png' %}" alt="Username Icon">
-        <input class="txt-box" type="text" placeholder="Enter username" >
-    </div>
-    <div class="input-row">
-        <img class="icon inline-icon" src="{% static 'images\password-icon.png' %}" alt="Password Icon">
-        <input class="txt-box" type="password" placeholder="Enter password" >
-    </div>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="input-row">
+            <img class="icon inline-icon" src="{% static 'images\user-icon.png' %}" alt="Username Icon">
+            <input class="txt-box" type="text" placeholder="Enter username" name="username">
+        </div>
+        <div class="input-row">
+            <img class="icon inline-icon" src="{% static 'images\password-icon.png' %}" alt="Password Icon">
+            <input class="txt-box" type="password" placeholder="Enter password" name="password">
+        </div>
 
-    <button type="submit" class="submit-button">Submit</button>
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
 </div>
 <script src="{% static 'js\login.js' %}"></script>
 {% endblock %}

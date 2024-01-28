@@ -3,26 +3,48 @@ from os import listdir, path as os_path
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.http import require_POST
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from .clients import process_file
 from .models import FileInfo, Biases
 
 
-def login(request):
-    return render(request, "login.html")
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Authenticate user
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            # Redirect to a success page or home page
+            return redirect('home')  # Replace 'home' with the name of your home page URL
+        else:
+            return JsonResponse({'status': 'error', 'message': 'No such user.'})
+    else:
+        return render(request, "login.html")
 
 
+@login_required
 def home(request):
     return render(request, "homepage.html")
 
 
+@login_required
 def editor(request, file_name):
     return render(request, "editor.html")
 
 
+@login_required
 @require_POST
 def upload_files(request):
     try:
@@ -40,6 +62,7 @@ def upload_files(request):
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 
+@login_required
 @require_POST
 def get_file_list(request):
     try:
@@ -51,6 +74,7 @@ def get_file_list(request):
         return JsonResponse({"status": 'error', "message": str(e)})
 
 
+@login_required
 @require_POST
 def delete_file(request):
     if request.method == 'POST':
@@ -70,6 +94,7 @@ def delete_file(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
 
 
+@login_required
 def get_file_info(request, file_name):
     def _return_info(_file):
         _file_info = FileInfo.objects.get(file_name=_file)

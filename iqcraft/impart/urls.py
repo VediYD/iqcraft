@@ -16,11 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import home, login, upload_files, get_file_list
+from .views import home, login_view, upload_files, get_file_list
 from .views import delete_file, get_file_info, editor
 
 urlpatterns = [
-    path('login', login, name='login'),
+    path('login', login_view, name='login'),
     path('home', home, name='home'),
     path('uploadFiles', upload_files, name='upload_files'),
     path('getFiles', get_file_list, name='get_file_list'),
