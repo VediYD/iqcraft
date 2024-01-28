@@ -71,10 +71,20 @@ def delete_file(request):
 
 
 def get_file_info(request, file_name):
+    def _return_info(_file):
+        _file_info = FileInfo.objects.get(file_name=_file)
+        _biases_info = Biases.objects.filter(file_info=_file_info).values(
+            'model_name', 'bias_text', 'audit_response', 'reasoning'
+        )
+        response_data = {
+            'status': 'success',
+            'file_info': _file_info.to_dict(),
+            'biases_info': list(_biases_info),
+        }
+        return response_data
+
     try:
-        # first check database for information
-        file_info = FileInfo.objects.get(file_name=file_name)
-        return JsonResponse({'status': 'success', 'file_info': file_info.to_dict()})
+        return JsonResponse(_return_info(file_name))
     except FileInfo.DoesNotExist:
         # if no data exists, process the file and save data to database
         processed_info = process_file(file_name)
@@ -83,12 +93,14 @@ def get_file_info(request, file_name):
             location=processed_info['location'],
         )
 
-        for bias_text in processed_info['biases']:
-            Biases.objects.create(
-                file_info=file_info,
-                bias_text=bias_text,
-            )
+        for _, bias in processed_info['model_biases'].items():
+            for bias_text in bias['biases']:
+                Biases.objects.create(
+                    file_info=file_info,
+                    model_name=bias['model_name'],
+                    bias_text=bias_text,
+                )
 
-        return JsonResponse({'status': 'success', 'file_info': processed_info})
+        return JsonResponse(_return_info(file_name))
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})

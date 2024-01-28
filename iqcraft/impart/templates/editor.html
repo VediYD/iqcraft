@@ -9,12 +9,14 @@
     <div class="editor-window">
         <div class="collapsible-panel collapsed" id="panel1">
             <p style="text-align: center; border-bottom: thin solid grey;"> Models </p>
+            <div class="model-list"></div>
         </div>
         <div class="collapsible-panel collapsed" id="panel2">
             <p style="text-align: center; border-bottom: thin solid grey;"> Biases </p>
+            <div class="bias-list"></div>
         </div>
     </div>
 </div>
-<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="https://code.jquery.com/jquery.min.js"></script>
 <script src="{% static 'js/editor.js' %}" defer></script>
 {% endblock %}

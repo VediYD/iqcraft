@@ -44,3 +44,16 @@
 .collapsed {
   width: 50px;
 }
+
+li.selected {
+    background-color: #d3d3d3;
+}
+
+li.hover {
+    background-color: #f0f0f0;
+}
+
+.model-list, .bias-list {
+    list-style-type: none;
+    padding-left: 10px;
+}
