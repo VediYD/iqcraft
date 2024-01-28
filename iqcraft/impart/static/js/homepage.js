@@ -32,7 +32,6 @@ function dropFile(event) {
     let defaultText = document.getElementById("default-upload-text")
 
     // when user drops a file, reset to original div
-    // TODO: change this to trigger open editor with last uploaded file
     defaultText.style.display = "block";
     dragoverText.style.display = "none";
 
@@ -58,8 +57,14 @@ function sendFilesToDjango(files) {
         headers: headers
     })
     .then(response => response.json())
-    .then(data => {
+        .then(data => {
         console.log(data);
+
+        if (data.status === 'success') {
+            loadEditor(files[0].name);
+        } else {
+            console.error('Error:', data.message);
+        }
     })
     .catch(error => {
         console.error('Error:', error);
@@ -91,5 +96,14 @@ function deleteFile(fileName) {
     .catch(error => {
         console.error('Error:', error);
     });
+}
+
+function loadEditor(fileName) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    const headers = new Headers();
+    headers.append('X-CSRFToken', csrftoken);
+
+    const redirectUrl = `/impart/loadEditor/${fileName}/`
+    window.location.href = redirectUrl;
 }
 

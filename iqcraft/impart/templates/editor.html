@@ -3,6 +3,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/editor.css' %}">
 <div class="editor">
+    <input type="file" id="file-input" hidden multiple onchange="sendFilesToDjango(files)"/>
     <div class="editor-bar">
         <img class="nav-open" src="{% static 'images/iconfinder_back.svg' %}" alt='open file nav' onclick="openFileNav(event)">
         <p class="editor-title">Impart AI Editor</p>

@@ -104,3 +104,56 @@ function loadEditor(fileName) {
     const redirectUrl = `/impart/loadEditor/${fileName}/`
     window.location.href = redirectUrl;
 }
+
+function deleteFile(fileName) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let headers = new Headers();
+    headers.append('X-CSRFToken', csrftoken);
+
+    let formData = new FormData();
+    formData.append('file_name', fileName);
+
+    fetch('/impart/deleteFile', {
+        method: 'POST',
+        body: formData,
+        headers: headers
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == 'success') {
+            console.log(`File ${fileName} deleted successfully.`);
+
+            // Check if all files have been deleted
+            checkIfAllFilesDeleted();
+        } else {
+            console.error('Error: Unable to delete file -', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function checkIfAllFilesDeleted() {
+    // Fetch the list of files after deletion
+    fetch('/impart/getFiles', {
+        method: 'POST',
+        body: new FormData(),
+        headers: new Headers({'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value})
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status == 'success' && data.message.length === 0) {
+            // If all files have been deleted, redirect the user
+            window.location.href = '/impart/home';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function fileUploader(event) {
+  // click on the hidden file upload form
+  document.getElementById("file-input").click();
+}

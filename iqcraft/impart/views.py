@@ -48,12 +48,13 @@ def editor(request, file_name):
 @require_POST
 def upload_files(request):
     try:
-        # save file to documents folder
-        # TODO: save as per username, separate files for separate users
-        # fetch this information from the database to know where the document needs to be saved
-
         for file in request.FILES.getlist('file'):
             file_path = default_storage.save(file.name, file)
+            file_info = FileInfo.objects.create(
+                file_name=file.name,
+                location=file_path,
+                user=request.user
+            )
 
         return JsonResponse({'status': 'success', 'message': 'File uploaded successfully'})
     except MultiValueDictKeyError:
@@ -66,10 +67,8 @@ def upload_files(request):
 @require_POST
 def get_file_list(request):
     try:
-        # TODO: extract user name from request and fetch that user's documents specifically
-        files = listdir(settings.MEDIA_ROOT)
-
-        return JsonResponse({"status": 'success', 'message': files})
+        files = FileInfo.objects.filter(user=request.user).values_list('file_name', flat=True)
+        return JsonResponse({"status": 'success', 'message': list(files)})
     except Exception as e:
         return JsonResponse({"status": 'error', "message": str(e)})
 
@@ -81,10 +80,16 @@ def delete_file(request):
         file_name = request.POST.get('file_name', None)
 
         if file_name:
+            try:
+                file_info = FileInfo.objects.get(file_name=file_name, user=request.user)
+            except FileInfo.DoesNotExist:
+                return JsonResponse(
+                    {'status': 'error', 'message': 'File not found or does not belong to the current user.'}
+                )
             file_path = os_path.join(settings.MEDIA_ROOT, file_name)
-
             try:
                 default_storage.delete(file_path)
+                file_info.delete()
                 return JsonResponse({'status': 'success', 'message': f'File {file_name} deleted successfully.'})
             except OSError as e:
                 return JsonResponse({'status': 'error', 'message': f'Error deleting file: {str(e)}'})
@@ -97,26 +102,37 @@ def delete_file(request):
 @login_required
 def get_file_info(request, file_name):
     def _return_info(_file):
-        _file_info = FileInfo.objects.get(file_name=_file)
+        _file_info = FileInfo.objects.get(file_name=_file, user=request.user)
+
+        # Use filter instead of get to handle multiple biases
         _biases_info = Biases.objects.filter(file_info=_file_info).values(
             'model_name', 'bias_text', 'audit_response', 'reasoning'
         )
+
+        if not _biases_info:
+            raise Biases.DoesNotExist
+
         response_data = {
             'status': 'success',
             'file_info': _file_info.to_dict(),
             'biases_info': list(_biases_info),
         }
+
+        print(_file_info, _biases_info)
         return response_data
 
     try:
         return JsonResponse(_return_info(file_name))
     except FileInfo.DoesNotExist:
-        # if no data exists, process the file and save data to database
-        processed_info = process_file(file_name)
-        file_info = FileInfo.objects.create(
-            file_name=processed_info['name'],
-            location=processed_info['location'],
+        return JsonResponse(
+            {
+                'status': 'error',
+                'message': 'File information not found. File may not be uploaded or belong to the user.'
+            }
         )
+    except Biases.DoesNotExist:
+        processed_info = process_file(file_name)
+        file_info = FileInfo.objects.get(file_name=file_name, user=request.user)
 
         for _, bias in processed_info['model_biases'].items():
             for bias_text in bias['biases']:

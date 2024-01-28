@@ -20,7 +20,7 @@ function handleData(data) {
         handleAgreement(fileInfo[0]?.audit_response);
         handleReasoning(fileInfo[0]?.reasoning);
     } else {
-        console.error('Error:', data.message);
+        handleError(data);
     }
 }
 
@@ -45,7 +45,6 @@ function updateAuditResponse(isAgree) {
 
     fileInfo = updatedFileInfo;
 
-    // Only update the view if audit_response is not null
     if (isAgree !== null) {
         handleAgreement(isAgree);
     }
@@ -145,20 +144,17 @@ function previousBias(event) {
     const selectedBias = $('.bias-item.selected');
 
     if (selectedBias.length > 0 && selectedBias.index() > 0) {
-        // If there is a previous bias in the list, select it
         selectedBias.prev().click();
     } else {
         const previousModel = $('.model-item.selected').prev('.model-item');
 
         if (previousModel.length > 0) {
-            // If there is a previous model, select its last bias
             const biasesForModel = fileInfo.filter(item => item.model_name === previousModel.text());
             const lastBias = biasesForModel[biasesForModel.length - 1];
             $('.model-item.selected').removeClass('selected');
             previousModel.click();
             $('.bias-item:contains("' + lastBias.bias_text + '")').click();
         } else {
-            // No more models in the previous direction
             alert('No more models available in the previous direction. Please select a different file to proceed.');
         }
     }
@@ -169,20 +165,16 @@ function nextBias(event) {
     const selectedBias = $('.bias-item.selected');
 
     if (selectedBias.length > 0 && selectedBias.next('.bias-item').length > 0) {
-        // If there is a next bias in the list, select it
         selectedBias.next().click();
     } else {
         const nextModel = $('.model-item.selected').next('.model-item');
-
         if (nextModel.length > 0) {
-            // If there is a next model, select its first bias
             const biasesForModel = fileInfo.filter(item => item.model_name === nextModel.text());
             const firstBias = biasesForModel[0];
             $('.model-item.selected').removeClass('selected');
             nextModel.click();
             $('.bias-item:contains("' + firstBias.bias_text + '")').click();
         } else {
-            // No more models in the next direction
             alert('No more models available in the next direction. Please select a different file to proceed.');
         }
     }
@@ -195,6 +187,8 @@ function clearAndLoadReasoning(text) {
 
 function handleError(error) {
     console.error('Error:', error);
+    alert(`Error: ${error.message}`);
+    openFileNav();
 }
 
 function togglePanel(panelId) {
@@ -327,3 +321,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 5000);
 });
+
+function sendFilesToDjango(files) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let headers = new Headers();
+    let formData = new FormData();
+    let i;
+
+    headers.append('X-CSRFToken', csrftoken);
+
+    for (i = 0; i < files.length; i++) {
+        formData.append('file', files[i]);
+    }
+
+    fetch('/impart/uploadFiles', {
+        method: 'POST',
+        body: formData,
+        headers: headers
+    })
+    .then(response => response.json())
+        .then(data => {
+        console.log(data);
+
+        if (data.status === 'success') {
+            loadEditor(files[0].name);
+        } else {
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+}

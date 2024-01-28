@@ -1,17 +1,20 @@
 from django.db import models
 import uuid
+from django.contrib.auth.models import User
 
 
 class FileInfo(models.Model):
     file_name = models.CharField(max_length=255, unique=True)
     location = models.CharField(max_length=255)
     file_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def to_dict(self):
         return {
             'file_name': self.file_name,
             'location': self.location,
-            'file_id': str(self.file_id)
+            'file_id': str(self.file_id),
+            'user_id': self.user.id
         }
 
 
