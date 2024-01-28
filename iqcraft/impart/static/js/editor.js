@@ -7,53 +7,69 @@ function extractFileNameFromUrl(url) {
 function fetchFileInfo(fileName) {
     fetch(`/impart/getFileInfo/${fileName}/`)
         .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                const models = Array.from(new Set(data.biases_info.map(item => item.model_name)));
-                const modelList = $('.model-list');
-                modelList.empty();
-                models.forEach((model, index) => {
-                    const listItem = $('<li>').text(model).addClass('model-item');
-                    listItem.on('click', function () {
-                        const selectedModel = $(this).text();
-                        const biasesForModel = data.biases_info.filter(item => item.model_name === selectedModel);
-                        const biasesList = biasesForModel.map(bias => $('<li>').text(bias.bias_text).addClass('bias-item'));
-                        $('.bias-list').empty().append($('<ul>').append(biasesList));
+        .then(handleData)
+        .catch(handleError);
+}
 
-                        $(this).addClass('selected').siblings().removeClass('selected');
-                        $('.bias-list .bias-item:first-child').click();
+function handleData(data) {
+    if (data.status === 'success') {
+        updateModelList(data.biases_info);
+        console.log('File Information:', data.file_info);
+        console.log('Bias Information:', data.biases_info);
+    } else {
+        console.error('Error:', data.message);
+    }
+}
 
-                        $('.bias-item').on('mouseenter', function () {
-                            $(this).addClass('hover');
-                        }).on('mouseleave', function () {
-                            $(this).removeClass('hover');
-                        }).on('click', function () {
-                            $(this).addClass('selected').siblings().removeClass('selected');
-                        });
-                    });
-                    listItem.hover(
-                        function () {
-                            $(this).addClass('hover');
-                        },
-                        function () {
-                            $(this).removeClass('hover');
-                        }
-                    );
-                    modelList.append(listItem);
-                    if (index === 0) {
-                        listItem.click();
-                    }
-                });
+function updateModelList(biasesInfo) {
+    const models = Array.from(new Set(biasesInfo.map(item => item.model_name)));
+    const modelList = $('.model-list');
+    modelList.empty();
 
-                console.log('File Information:', data.file_info);
-                console.log('Bias Information:', data.biases_info);
-            } else {
-                console.error('Error:', data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+    models.forEach((model, index) => {
+        const listItem = createModelItem(model, biasesInfo);
+        modelList.append(listItem);
+        if (index === 0) {
+            listItem.click();
+        }
+    });
+}
+
+function createModelItem(model, biasesInfo) {
+    const listItem = $('<li>').text(model).addClass('model-item');
+
+    listItem.on('click', function () {
+        const selectedModel = $(this).text();
+        const biasesForModel = biasesInfo.filter(item => item.model_name === selectedModel);
+        const biasesList = biasesForModel.map(bias => $('<li>').text(bias.bias_text).addClass('bias-item'));
+
+        $('.bias-list').empty().append($('<ul>').append(biasesList));
+        $(this).addClass('selected').siblings().removeClass('selected');
+        $('.bias-list .bias-item:first-child').click();
+
+        $('.bias-item').on('mouseenter', function () {
+            $(this).addClass('hover');
+        }).on('mouseleave', function () {
+            $(this).removeClass('hover');
+        }).on('click', function () {
+            $(this).addClass('selected').siblings().removeClass('selected');
         });
+    });
+
+    listItem.hover(
+        function () {
+            $(this).addClass('hover');
+        },
+        function () {
+            $(this).removeClass('hover');
+        }
+    );
+
+    return listItem;
+}
+
+function handleError(error) {
+    console.error('Error:', error);
 }
 
 function togglePanel(panelId) {
