@@ -2,6 +2,23 @@
 {% block content %}
 {% load static %}
 <link rel="stylesheet" href="{% static 'css\login.css' %}">
-<div class="login-window">Login Window</div>
+<div class="login-window">
+    <div class="center-top">
+        <img class="icon center-icon" src="{% static 'images\a2i2-red-logo.svg' %}" alt="a2i2-icon">
+    </div>
+    <div class="welcome-text">
+        <p style="font-size: 2vw;">Welcome to IQCraft</p>
+    </div>
+    <div class="input-row">
+        <img class="icon inline-icon" src="{% static 'images\user-icon.png' %}" alt="Username Icon">
+        <input class="txt-box" type="text" placeholder="Enter username" >
+    </div>
+    <div class="input-row">
+        <img class="icon inline-icon" src="{% static 'images\password-icon.png' %}" alt="Password Icon">
+        <input class="txt-box" type="password" placeholder="Enter password" >
+    </div>
+
+    <button type="submit" class="submit-button">Submit</button>
+</div>
 <script src="{% static 'js\login.js' %}"></script>
 {% endblock %}
