@@ -50,6 +50,7 @@ def upload_files(request):
     try:
         for file in request.FILES.getlist('file'):
             file_path = default_storage.save(file.name, file)
+            print(file_path)
             file_info = FileInfo.objects.create(
                 file_name=file.name,
                 location=file_path,

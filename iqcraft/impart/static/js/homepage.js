@@ -39,6 +39,15 @@ function dropFile(event) {
     sendFilesToDjango(files);
 }
 
+function sanitizeFilename(filename) {
+    let sanitizedFilename = filename.replace(/\s/g, '-');
+    sanitizedFilename = sanitizedFilename.replace(/[^a-zA-Z0-9_.-]/g, '');
+    if (sanitizedFilename.length === 0) {
+        sanitizedFilename = 'default_filename';
+    }
+    return sanitizedFilename;
+}
+
 function sendFilesToDjango(files) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     let headers = new Headers();
@@ -48,7 +57,10 @@ function sendFilesToDjango(files) {
     headers.append('X-CSRFToken', csrftoken);
 
     for (i = 0; i < files.length; i++) {
-        formData.append('file', files[i]);
+        const sanitizedFileName = sanitizeFilename(files[i].name);
+        const sanitizedFile = new File([files[i]], sanitizedFileName, { type: files[i].type });
+
+        formData.append('file', sanitizedFile);
     }
 
     fetch('/impart/uploadFiles', {
@@ -57,11 +69,11 @@ function sendFilesToDjango(files) {
         headers: headers
     })
     .then(response => response.json())
-        .then(data => {
+    .then(data => {
         console.log(data);
 
         if (data.status === 'success') {
-            loadEditor(files[0].name);
+            loadEditor(sanitizeFilename(files[0].name));
         } else {
             console.error('Error:', data.message);
         }
@@ -69,7 +81,6 @@ function sendFilesToDjango(files) {
     .catch(error => {
         console.error('Error:', error);
     });
-
 }
 
 function deleteFile(fileName) {

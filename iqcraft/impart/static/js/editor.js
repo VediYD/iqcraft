@@ -18,6 +18,7 @@ function handleData(data) {
     if (data.status === 'success') {
         fileInfo = data.biases_info;
         updateModelList();
+        handleBiasText(fileInfo[0]?.bias_text);
         handleAgreement(fileInfo[0]?.audit_response);
         handleReasoning(fileInfo[0]?.reasoning);
     } else {
@@ -73,10 +74,16 @@ function updateReasoning(reasoning) {
     }
 }
 
+function handleBiasText(text){
+    const biasesTextElement = document.querySelector('.bias-text');
+    biasesTextElement.innerText = text;
+}
+
 function handleModelSelection(selectedModel) {
     const biasesForModel = fileInfo.filter(item => item.model_name === selectedModel);
     const selectedBiasItem = biasesForModel[0];
 
+    handleBiasText(selectedBiasItem.bias_text);
     handleAgreement(selectedBiasItem.audit_response);
     handleReasoning(selectedBiasItem.reasoning);
 }
@@ -91,7 +98,7 @@ function updateModelList() {
         modelList.append(listItem);
         if (index === 0) {
             listItem.click();
-            handleModelSelection(model); // Added to handle initial model selection
+            handleModelSelection(model);
         }
         $('.bias-item:first-child').click();
     });
@@ -123,6 +130,7 @@ function createModelItem(model) {
             const selectedBiasText = $(this).text();
             const selectedModelName = $('.model-item.selected').text();
             const selectedBiasItem = fileInfo.find(item => item.model_name === selectedModelName && item.bias_text === selectedBiasText);
+            handleBiasText(selectedBiasItem.bias_text);
             handleAgreement(selectedBiasItem.audit_response);
             clearAndLoadReasoning(selectedBiasItem.reasoning);
         });
@@ -269,6 +277,15 @@ function updateLastSavedTimestamp() {
     timestampElement.textContent = timestampText;
 }
 
+function sanitizeFilename(filename) {
+    let sanitizedFilename = filename.replace(/\s/g, '-');
+    sanitizedFilename = sanitizedFilename.replace(/[^a-zA-Z0-9_.-]/g, '');
+    if (sanitizedFilename.length === 0) {
+        sanitizedFilename = 'default_filename';
+    }
+    return sanitizedFilename;
+}
+
 function sendFilesToDjango(files) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     let headers = new Headers();
@@ -278,7 +295,10 @@ function sendFilesToDjango(files) {
     headers.append('X-CSRFToken', csrftoken);
 
     for (i = 0; i < files.length; i++) {
-        formData.append('file', files[i]);
+        const sanitizedFileName = sanitizeFilename(files[i].name);
+        const sanitizedFile = new File([files[i]], sanitizedFileName, { type: files[i].type });
+
+        formData.append('file', sanitizedFile);
     }
 
     fetch('/impart/uploadFiles', {
@@ -287,11 +307,11 @@ function sendFilesToDjango(files) {
         headers: headers
     })
     .then(response => response.json())
-        .then(data => {
+    .then(data => {
         console.log(data);
 
         if (data.status === 'success') {
-            loadEditor(files[0].name);
+            loadEditor(sanitizeFilename(files[0].name));
         } else {
             console.error('Error:', data.message);
         }
@@ -299,7 +319,6 @@ function sendFilesToDjango(files) {
     .catch(error => {
         console.error('Error:', error);
     });
-
 }
 
 document.addEventListener('DOMContentLoaded', function() {
