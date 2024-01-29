@@ -1,4 +1,5 @@
 let fileInfo = {};
+let lastSavedTimestamp = new Date();
 
 function extractFileNameFromUrl(url) {
     const urlParts = url.split('/');
@@ -250,6 +251,57 @@ function getTextAreaValue() {
     return textArea
 }
 
+function updateLastSavedTimestamp() {
+    const timestampElement = document.getElementById('last-saved-timestamp');
+    const now = new Date();
+
+    // Display the timestamp in a user-friendly format (e.g., seconds ago, minutes ago)
+    const secondsAgo = Math.floor((now - lastSavedTimestamp) / 1000);
+    let timestampText = 'Last saved: ';
+
+    if (secondsAgo < 60) {
+        timestampText += secondsAgo + ' seconds ago';
+    } else {
+        const minutesAgo = Math.floor(secondsAgo / 60);
+        timestampText += minutesAgo + (minutesAgo === 1 ? ' minute ago' : ' minutes ago');
+    }
+
+    timestampElement.textContent = timestampText;
+}
+
+function sendFilesToDjango(files) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    let headers = new Headers();
+    let formData = new FormData();
+    let i;
+
+    headers.append('X-CSRFToken', csrftoken);
+
+    for (i = 0; i < files.length; i++) {
+        formData.append('file', files[i]);
+    }
+
+    fetch('/impart/uploadFiles', {
+        method: 'POST',
+        body: formData,
+        headers: headers
+    })
+    .then(response => response.json())
+        .then(data => {
+        console.log(data);
+
+        if (data.status === 'success') {
+            loadEditor(files[0].name);
+        } else {
+            console.error('Error:', data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const currentUrl = window.location.href;
     const fileName = extractFileNameFromUrl(currentUrl);
@@ -323,6 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if (data.status === 'success') {
                         console.log('Progress saved successfully');
+                        lastSavedTimestamp = new Date();
                     } else {
                         console.error('Error:', data.message);
                     }
@@ -334,37 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('No Bias Selected.');
         }
     }, 5000);
+
+    setInterval(updateLastSavedTimestamp, 1000);
 });
-
-function sendFilesToDjango(files) {
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-    let headers = new Headers();
-    let formData = new FormData();
-    let i;
-
-    headers.append('X-CSRFToken', csrftoken);
-
-    for (i = 0; i < files.length; i++) {
-        formData.append('file', files[i]);
-    }
-
-    fetch('/impart/uploadFiles', {
-        method: 'POST',
-        body: formData,
-        headers: headers
-    })
-    .then(response => response.json())
-        .then(data => {
-        console.log(data);
-
-        if (data.status === 'success') {
-            loadEditor(files[0].name);
-        } else {
-            console.error('Error:', data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-
-}
