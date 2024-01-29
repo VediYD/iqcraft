@@ -12,6 +12,8 @@ import pickle
 
 load_dotenv('iqcraft/impart/clients/.env')
 legal_reasoning_questions = [
+    "Do you see any bias or discrimination based on gender, race, ethnicity or other wise in any parts of "
+    "this document?"
     "What is this legal document about? Is it a court case, contract agreement etc? "
     "What is the purpose of this document?",
     "What is the context of the document? What are the relevant parties mentioned in this document? "
@@ -27,7 +29,7 @@ legal_reasoning_questions = [
 
 
 def openai_reponse(text, vecstore):
-    docs = vecstore.similarity_search(query=text, k=10)
+    docs = vecstore.similarity_search(query=text, k=30)
     llm = OpenAI()
     chain = load_qa_chain(llm=llm, chain_type="stuff")
     with get_openai_callback() as cb:
