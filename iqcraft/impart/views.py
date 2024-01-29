@@ -118,7 +118,6 @@ def get_file_info(request, file_name):
             'biases_info': list(_biases_info),
         }
 
-        print(_file_info, _biases_info)
         return response_data
 
     try:
@@ -131,7 +130,8 @@ def get_file_info(request, file_name):
             }
         )
     except Biases.DoesNotExist:
-        processed_info = process_file(file_name)
+        file_path = os_path.join(settings.MEDIA_ROOT, file_name)
+        processed_info = process_file(file_path)
         file_info = FileInfo.objects.get(file_name=file_name, user=request.user)
 
         for _, bias in processed_info['model_biases'].items():
